@@ -1,5 +1,6 @@
 package com.example.template.controller.advice;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -11,14 +12,13 @@ import com.example.template.object.ErrorResponse;
 @RestControllerAdvice
 public class GlobalControllerExceptionHandler {
 
-	@ExceptionHandler(Exception.class)
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(DuplicateKeyException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
 	@ResponseBody
-	public ErrorResponse handleException(Exception ex) {
+	public ErrorResponse handleException(DuplicateKeyException ex) {
 		ErrorResponse message = new ErrorResponse();
-		message.setStatusCode(500);
+		message.setDescription("Object already exists!");
 		message.setMessage(ex.getMessage());
-
 		return message;
 	}
 }

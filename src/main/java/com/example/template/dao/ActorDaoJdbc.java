@@ -1,5 +1,6 @@
 package com.example.template.dao;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class ActorDaoJdbc implements ActorDao {
-	
-	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
-	
+
+	@Autowired
+	private NamedParameterJdbcTemplate jdbcTemplate;
+
 	@Override
 	public Actor getActor(Integer id) {
 		Actor actor = null;
@@ -29,6 +31,17 @@ public class ActorDaoJdbc implements ActorDao {
 		if (actors.size() > 0)
 			actor = actors.get(0);
 		return actor;
+	}
+
+	@Override
+	public int insertActor(Actor actor) {
+		log.info("Inserting actor {}", actor);
+		String query = "INSERT INTO actor (actor_id, first_name, last_name, last_update) VALUES (:id, :firstName, :lastName, :lastUpdate);";
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("id", actor.getId()).addValue("firstName", actor.getFirstName()).addValue("lastName",
+				actor.getLastName());
+		params.addValue("lastUpdate", Timestamp.valueOf(actor.getLastUpdate()));
+		return jdbcTemplate.update(query, params);
 	}
 
 }
