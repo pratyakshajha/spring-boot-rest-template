@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,5 +47,15 @@ public class ActorController {
 			return new ResponseEntity<Actor>(HttpStatus.OK);
 		else
 			return new ResponseEntity<Actor>(HttpStatus.BAD_REQUEST);
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<Actor> updateActor(@PathVariable Integer id, @RequestBody Actor actor) {
+		actor.setId(id);
+		int result = dao.updateActor(actor);
+		if (result == 1)
+			return new ResponseEntity<Actor>(actor, HttpStatus.OK);
+		else
+			return new ResponseEntity<Actor>(actor, HttpStatus.BAD_REQUEST);
 	}
 }

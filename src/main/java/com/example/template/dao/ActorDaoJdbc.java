@@ -53,4 +53,15 @@ public class ActorDaoJdbc implements ActorDao {
 		return jdbcTemplate.update(query, params);
 	}
 
+	@Override
+	public int updateActor(Actor actor) {
+		log.info("Updating actor {}", actor);
+		String query = "UPDATE actor SET first_name = :firstName, last_name = :lastName, last_update = :lastUpdate WHERE actor_id = :id;";
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("id", actor.getId()).addValue("firstName", actor.getFirstName()).addValue("lastName",
+				actor.getLastName());
+		params.addValue("lastUpdate", Timestamp.valueOf(actor.getLastUpdate()));
+		return jdbcTemplate.update(query, params);
+	}
+
 }
