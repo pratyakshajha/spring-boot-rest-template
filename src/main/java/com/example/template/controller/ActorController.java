@@ -3,6 +3,7 @@ package com.example.template.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,10 +24,10 @@ public class ActorController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Actor> getActor(@PathVariable Integer id) {
 		Actor actor = dao.getActor(id);
-		if (actor == null)
-			return new ResponseEntity<Actor>(HttpStatus.NOT_FOUND);
-		else
+		if (actor != null)
 			return new ResponseEntity<Actor>(actor, HttpStatus.OK);
+		else
+			return new ResponseEntity<Actor>(HttpStatus.NOT_FOUND);
 	}
 	
 	@PostMapping
@@ -36,5 +37,14 @@ public class ActorController {
 			return new ResponseEntity<Actor>(actor, HttpStatus.CREATED);
 		else
 			return new ResponseEntity<Actor>(actor, HttpStatus.BAD_REQUEST);
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Actor> deleteActor(@PathVariable Integer id) {
+		int result = dao.deleteActor(id);
+		if (result == 1)
+			return new ResponseEntity<Actor>(HttpStatus.OK);
+		else
+			return new ResponseEntity<Actor>(HttpStatus.BAD_REQUEST);
 	}
 }

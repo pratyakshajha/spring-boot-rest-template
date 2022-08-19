@@ -44,4 +44,13 @@ public class ActorDaoJdbc implements ActorDao {
 		return jdbcTemplate.update(query, params);
 	}
 
+	@Override
+	public int deleteActor(Integer id) {
+		log.info("Deleting actor with id {}", id);
+		String query = "DELETE FROM actor WHERE actor_id = :id;";
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("id", id);
+		return jdbcTemplate.update(query, params);
+	}
+
 }
