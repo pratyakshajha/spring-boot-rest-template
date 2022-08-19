@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -57,5 +58,15 @@ public class ActorController {
 			return new ResponseEntity<Actor>(actor, HttpStatus.OK);
 		else
 			return new ResponseEntity<Actor>(actor, HttpStatus.BAD_REQUEST);
+	}
+	
+	@PatchMapping("/{id}")
+	public ResponseEntity<Actor> partialApdateActor(@PathVariable Integer id, @RequestBody Actor actor) {
+		actor.setId(id);
+		int result = dao.partialApdateActor(actor);
+		if (result == 1)
+			return new ResponseEntity<Actor>(HttpStatus.OK);
+		else
+			return new ResponseEntity<Actor>(HttpStatus.BAD_REQUEST);
 	}
 }

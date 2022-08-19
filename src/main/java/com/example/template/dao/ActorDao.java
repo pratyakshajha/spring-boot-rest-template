@@ -7,4 +7,5 @@ public interface ActorDao {
 	public int insertActor(Actor actor);
 	public int deleteActor(Integer id);
 	public int updateActor(Actor actor);
+	public int partialApdateActor(Actor actor);
 }

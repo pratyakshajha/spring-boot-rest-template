@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.example.template.dao.rowmapper.ActorRowMapper;
 import com.example.template.object.Actor;
@@ -64,4 +65,36 @@ public class ActorDaoJdbc implements ActorDao {
 		return jdbcTemplate.update(query, params);
 	}
 
+	@Override
+	public int partialApdateActor(Actor actor) {
+		log.info("Partially updating actor {}", actor);
+		if (!StringUtils.hasText(actor.getFirstName()) && !StringUtils.hasText(actor.getLastName()) && actor.getLastUpdate() == null)
+			return 0;
+		
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		StringBuilder query = new StringBuilder("UPDATE actor SET ");
+		if (StringUtils.hasText(actor.getFirstName())) {
+			query.append("first_name = :firstName");
+			params.addValue("firstName", actor.getFirstName());
+		}
+		if (StringUtils.hasText(actor.getLastName())) {
+			if (StringUtils.hasText(actor.getFirstName()))
+				query.append(", last_name = :lastName");
+			else
+				query.append("last_name = :lastName");
+			params.addValue("lastName", actor.getLastName());
+		}
+		if (actor.getLastUpdate() != null) {
+			if (StringUtils.hasText(actor.getFirstName()) || StringUtils.hasText(actor.getLastName()))
+				query.append(", last_update = :lastUpdate");
+			else
+				query.append("last_update = :lastUpdate");
+			params.addValue("lastUpdate", Timestamp.valueOf(actor.getLastUpdate()));
+		}
+		
+		query.append(" WHERE actor_id = :id;");
+		params.addValue("id", actor.getId());
+		return jdbcTemplate.update(query.toString(), params);
+	}
+	
 }
