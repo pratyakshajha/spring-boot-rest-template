@@ -22,6 +22,16 @@ public class ActorDaoJdbc implements ActorDao {
 	private NamedParameterJdbcTemplate jdbcTemplate;
 
 	@Override
+	public List<Actor> searchActors(String firstName, String lastName) {
+		log.info("Searching for actor with firstName {} and lastName {}", firstName, lastName);
+		String query = "SELECT actor_id, first_name, last_name, last_update FROM actor WHERE first_name = :firstName AND last_name = :lastName LIMIT 100;";
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("firstName", firstName).addValue("lastName", lastName);
+		List<Actor> actors = jdbcTemplate.query(query, params, new ActorRowMapper());
+		return actors;
+	}
+	
+	@Override
 	public Actor getActor(Integer id) {
 		Actor actor = null;
 		log.info("Searching for actor with id {}", id);

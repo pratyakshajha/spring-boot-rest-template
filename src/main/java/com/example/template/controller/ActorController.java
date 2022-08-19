@@ -1,5 +1,7 @@
 package com.example.template.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.template.dao.ActorDao;
@@ -23,6 +26,15 @@ public class ActorController {
 	@Autowired
 	ActorDao dao;
 
+	@GetMapping("/")
+	public ResponseEntity<List<Actor>> searchActors(@RequestParam String firstName, @RequestParam String lastName) {
+		List<Actor> actors = dao.searchActors(firstName, lastName);
+		if (actors != null)
+			return new ResponseEntity<List<Actor>>(actors, HttpStatus.OK);
+		else
+			return new ResponseEntity<List<Actor>>(HttpStatus.NOT_FOUND);
+	}
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<Actor> getActor(@PathVariable Integer id) {
 		Actor actor = dao.getActor(id);
@@ -36,7 +48,7 @@ public class ActorController {
 	public ResponseEntity<Actor> createActor(@RequestBody Actor actor) {
 		int result = dao.insertActor(actor);
 		if (result == 1)
-			return new ResponseEntity<Actor>(actor, HttpStatus.CREATED);
+			return new ResponseEntity<Actor>(HttpStatus.NO_CONTENT);
 		else
 			return new ResponseEntity<Actor>(actor, HttpStatus.BAD_REQUEST);
 	}
@@ -45,7 +57,7 @@ public class ActorController {
 	public ResponseEntity<Actor> deleteActor(@PathVariable Integer id) {
 		int result = dao.deleteActor(id);
 		if (result == 1)
-			return new ResponseEntity<Actor>(HttpStatus.OK);
+			return new ResponseEntity<Actor>(HttpStatus.NO_CONTENT);
 		else
 			return new ResponseEntity<Actor>(HttpStatus.BAD_REQUEST);
 	}
@@ -55,7 +67,7 @@ public class ActorController {
 		actor.setId(id);
 		int result = dao.updateActor(actor);
 		if (result == 1)
-			return new ResponseEntity<Actor>(actor, HttpStatus.OK);
+			return new ResponseEntity<Actor>(HttpStatus.NO_CONTENT);
 		else
 			return new ResponseEntity<Actor>(actor, HttpStatus.BAD_REQUEST);
 	}
@@ -65,7 +77,7 @@ public class ActorController {
 		actor.setId(id);
 		int result = dao.partialApdateActor(actor);
 		if (result == 1)
-			return new ResponseEntity<Actor>(HttpStatus.OK);
+			return new ResponseEntity<Actor>(HttpStatus.NO_CONTENT);
 		else
 			return new ResponseEntity<Actor>(HttpStatus.BAD_REQUEST);
 	}
