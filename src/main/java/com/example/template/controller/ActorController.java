@@ -1,6 +1,7 @@
 package com.example.template.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,23 +19,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.template.dao.ActorDao;
 import com.example.template.object.Actor;
+import com.example.template.service.ActorService;
 
 @RestController
 @RequestMapping("/actors")
 public class ActorController {
 
 	@Autowired
-	ActorDao dao;
+	private ActorDao dao;
 
-	@GetMapping("/")
-	public ResponseEntity<List<Actor>> searchActors(@RequestParam String firstName, @RequestParam String lastName) {
-		List<Actor> actors = dao.searchActors(firstName, lastName);
+	@Autowired
+	private ActorService service;
+
+	@GetMapping
+	public ResponseEntity<List<Actor>> searchActors(@RequestParam Optional<Integer> limit,
+			@RequestParam Optional<Integer> offset) {
+		List<Actor> actors = service.searchActors(limit, offset);
 		if (actors != null)
 			return new ResponseEntity<List<Actor>>(actors, HttpStatus.OK);
 		else
 			return new ResponseEntity<List<Actor>>(HttpStatus.NOT_FOUND);
 	}
-	
+
 	@GetMapping("/{id}")
 	public ResponseEntity<Actor> getActor(@PathVariable Integer id) {
 		Actor actor = dao.getActor(id);
@@ -43,7 +49,7 @@ public class ActorController {
 		else
 			return new ResponseEntity<Actor>(HttpStatus.NOT_FOUND);
 	}
-	
+
 	@PostMapping
 	public ResponseEntity<Actor> createActor(@RequestBody Actor actor) {
 		int result = dao.insertActor(actor);
@@ -52,7 +58,7 @@ public class ActorController {
 		else
 			return new ResponseEntity<Actor>(actor, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Actor> deleteActor(@PathVariable Integer id) {
 		int result = dao.deleteActor(id);
@@ -61,7 +67,7 @@ public class ActorController {
 		else
 			return new ResponseEntity<Actor>(HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@PutMapping("/{id}")
 	public ResponseEntity<Actor> updateActor(@PathVariable Integer id, @RequestBody Actor actor) {
 		actor.setId(id);
@@ -71,7 +77,7 @@ public class ActorController {
 		else
 			return new ResponseEntity<Actor>(actor, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@PatchMapping("/{id}")
 	public ResponseEntity<Actor> partialApdateActor(@PathVariable Integer id, @RequestBody Actor actor) {
 		actor.setId(id);

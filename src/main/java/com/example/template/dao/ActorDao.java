@@ -5,7 +5,7 @@ import java.util.List;
 import com.example.template.object.Actor;
 
 public interface ActorDao {
-	public List<Actor> searchActors(String firstName, String lastName);
+	public List<Actor> searchActors(Integer limit, Integer offset);
 	public Actor getActor(Integer id);
 	public int insertActor(Actor actor);
 	public int deleteActor(Integer id);

@@ -1,6 +1,7 @@
 package com.example.template.dao;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,18 +20,18 @@ import lombok.extern.slf4j.Slf4j;
 public class ActorDaoJdbc implements ActorDao {
 
 	@Autowired
-	private NamedParameterJdbcTemplate jdbcTemplate;
+	NamedParameterJdbcTemplate jdbcTemplate;
 
 	@Override
-	public List<Actor> searchActors(String firstName, String lastName) {
-		log.info("Searching for actor with firstName {} and lastName {}", firstName, lastName);
-		String query = "SELECT actor_id, first_name, last_name, last_update FROM actor WHERE first_name = :firstName AND last_name = :lastName LIMIT 100;";
+	public List<Actor> searchActors(Integer limit, Integer offset) {
+		log.info("Searching for actor with limit {} and offset {}", limit, offset);
+		String query = "SELECT actor_id, first_name, last_name, last_update FROM actor LIMIT :limit OFFSET :offset;";
 		MapSqlParameterSource params = new MapSqlParameterSource();
-		params.addValue("firstName", firstName).addValue("lastName", lastName);
+		params.addValue("limit", limit).addValue("offset", offset);
 		List<Actor> actors = jdbcTemplate.query(query, params, new ActorRowMapper());
 		return actors;
 	}
-	
+
 	@Override
 	public Actor getActor(Integer id) {
 		Actor actor = null;
@@ -51,7 +52,7 @@ public class ActorDaoJdbc implements ActorDao {
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("id", actor.getId()).addValue("firstName", actor.getFirstName()).addValue("lastName",
 				actor.getLastName());
-		params.addValue("lastUpdate", Timestamp.valueOf(actor.getLastUpdate()));
+		params.addValue("lastUpdate", new Timestamp(new Date().getTime()));
 		return jdbcTemplate.update(query, params);
 	}
 
@@ -71,16 +72,17 @@ public class ActorDaoJdbc implements ActorDao {
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("id", actor.getId()).addValue("firstName", actor.getFirstName()).addValue("lastName",
 				actor.getLastName());
-		params.addValue("lastUpdate", Timestamp.valueOf(actor.getLastUpdate()));
+		params.addValue("lastUpdate", new Timestamp(new Date().getTime()));
 		return jdbcTemplate.update(query, params);
 	}
 
 	@Override
 	public int partialApdateActor(Actor actor) {
 		log.info("Partially updating actor {}", actor);
-		if (!StringUtils.hasText(actor.getFirstName()) && !StringUtils.hasText(actor.getLastName()) && actor.getLastUpdate() == null)
+		System.out.println(actor);
+		if (!StringUtils.hasText(actor.getFirstName()) && !StringUtils.hasText(actor.getLastName()))
 			return 0;
-		
+
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		StringBuilder query = new StringBuilder("UPDATE actor SET ");
 		if (StringUtils.hasText(actor.getFirstName())) {
@@ -94,17 +96,15 @@ public class ActorDaoJdbc implements ActorDao {
 				query.append("last_name = :lastName");
 			params.addValue("lastName", actor.getLastName());
 		}
-		if (actor.getLastUpdate() != null) {
-			if (StringUtils.hasText(actor.getFirstName()) || StringUtils.hasText(actor.getLastName()))
-				query.append(", last_update = :lastUpdate");
-			else
-				query.append("last_update = :lastUpdate");
-			params.addValue("lastUpdate", Timestamp.valueOf(actor.getLastUpdate()));
-		}
-		
+		if (StringUtils.hasText(actor.getFirstName()) || StringUtils.hasText(actor.getLastName()))
+			query.append(", last_update = :lastUpdate");
+		else
+			query.append("last_update = :lastUpdate");
+		params.addValue("lastUpdate", new Timestamp(new Date().getTime()));
 		query.append(" WHERE actor_id = :id;");
 		params.addValue("id", actor.getId());
+		
 		return jdbcTemplate.update(query.toString(), params);
 	}
-	
+
 }
