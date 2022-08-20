@@ -26,8 +26,9 @@ There are following endpoints:
 # Running locally
 1. Clone this repository and open it in the IDE of your choice.
 2. [Install](https://dev.mysql.com/doc/sakila/en/sakila-installation.html) mySQL sample database having the actor table, if it doesn't exist
-3. Build the project with maven `mvn clean package`
-4. Run the `DemoApplication.java` with  `mvnw spring-boot:run`. 
+3. Add an environment variable `db.password` with password to the database
+4. Build the project with maven `mvn clean package`
+5. Run the `DemoApplication.java` with  `mvnw spring-boot:run`. 
 	- This class can be run via an IDE
 	- The war file in target folder can be deployed to a server
 
@@ -42,20 +43,20 @@ This project has layer architecture.
 - `ActorServiceImpl`: Service class implementing `ActorService`
 - `ActorDao`: Interface for interacting with SQL databases
 - `ActorDaoJdbc`: Service class implementing `ActorDao`
-- `ActorRowMapper`: Maps the resulset of read operations from database
-- `ActorDaoJdbcTest`: junit tests for `ActorDaoJdbc`
+- `ActorRowMapper`: Maps the resultset of read operations from database
+- `ActorDaoJdbcTest`: Junit tests for `ActorDaoJdbc`
 
 ## What does a dependency do?
 ### Logic
 These dependencies are essential for creating an API app which can do CRUD operations with a SQL database
-- spring-boot-starter-web: Spring MVC and associated dependencies needed for a REST API
-- spring-boot-starter-data-jdbc: Spring jdbc and related dependencies to connect and interact with SQL databases using JDBC
-- mysql-connector-java: MySQL driver
-- spring-boot-starter-test: Junit, Mockito and testing related dependencies to write unit tests
+- `spring-boot-starter-web`: Spring MVC and associated dependencies needed for a REST API
+- `spring-boot-starter-data-jdbc`: Spring jdbc and related dependencies to connect and interact with SQL databases using JDBC
+- `mysql-connector-java`: MySQL driver
+- `spring-boot-starter-test`: Junit, Mockito and testing related dependencies to write unit tests
 ### Developer ease
 These dependencies are optional but help with saving time and reducing repetitive work.
-- spring-boot-starter-tomcat: Embedded tomcat server for quickly running app locally
-- spring-boot-devtools: Developer tools with features like live reload, auto restart, etc 
-- lombok: Auto generate getters, setters, tostring etc to reduce boilerplate from code. Also, [install](https://projectlombok.org/) extension for your IDE
-- springdoc-openapi-ui: Auto generate open API spec and swagger UI to reduce efforts of documenting an API
+- `spring-boot-starter-tomcat`: Embedded tomcat server for quickly running app locally
+- `spring-boot-devtools`: Developer tools with features like live reload, auto restart, etc 
+- `lombok`: Auto generate getters, setters, tostring etc to reduce boilerplate from code. Also, [install](https://projectlombok.org/) extension for your IDE
+- `springdoc-openapi-ui`: Auto generate open API spec and swagger UI to reduce efforts of documenting an API
 
